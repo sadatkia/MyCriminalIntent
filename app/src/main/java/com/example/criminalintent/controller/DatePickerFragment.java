@@ -1,7 +1,10 @@
 package com.example.criminalintent.controller;
 
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,17 +16,29 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 
 import com.example.criminalintent.R;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DatePickerFragment extends DialogFragment {
 
-    public static DatePickerFragment newInstance() {
+    private static final String ARG_CRIME_DATE = "crimeDate";
+    public static final String EXTRA_CRIME_DATE = "com.example.criminalintent.crimeDate";
+
+    private DatePicker mDatePicker;
+    private Date mDate;
+
+    public static DatePickerFragment newInstance(Date date) {
 
         Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_DATE, date);
 
         DatePickerFragment fragment = new DatePickerFragment();
         fragment.setArguments(args);
@@ -34,6 +49,13 @@ public class DatePickerFragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mDate = (Date) getArguments().getSerializable(ARG_CRIME_DATE);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -41,10 +63,43 @@ public class DatePickerFragment extends DialogFragment {
         View view = layoutInflater
                 .inflate(R.layout.fragment_date_picker, null, false);
 
+        mDatePicker = view.findViewById(R.id.date_picker);
+
+        initDatePicker();
+
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.date_picker_title)
-                .setPositiveButton(android.R.string.ok, null)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        int year = mDatePicker.getYear();
+                        int monthOfYear = mDatePicker.getMonth();
+                        int dayOfMonth = mDatePicker.getDayOfMonth();
+
+                        GregorianCalendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                        Date date = calendar.getTime();
+
+                        Intent intent = new Intent();
+                        intent.putExtra(EXTRA_CRIME_DATE, date);
+
+                        Fragment fragment = getTargetFragment();
+                        fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+
+//                        CrimeDetailFragment crimeDetailFragment = (CrimeDetailFragment) getTargetFragment();
+//                        crimeDetailFragment.updateCrimeDate(date);
+                    }
+                })
                 .setView(view)
                 .create();
+    }
+
+    private void initDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mDate);
+
+        int year = calendar.get(Calendar.YEAR);
+        int monthOfYear = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        mDatePicker.init(year, monthOfYear, dayOfMonth, null);
     }
 }

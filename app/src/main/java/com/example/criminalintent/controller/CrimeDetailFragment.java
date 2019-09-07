@@ -1,6 +1,8 @@
 package com.example.criminalintent.controller;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -21,6 +23,7 @@ import com.example.criminalintent.R;
 import com.example.criminalintent.model.Crime;
 import com.example.criminalintent.repository.CrimeRepository;
 
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -31,6 +34,7 @@ public class CrimeDetailFragment extends Fragment {
 
     public static final String ARG_CRIME_ID = "crimeId";
     public static final String TAG_DATE_PICKER = "DatePicker";
+    public static final int REQUEST_CODE_DATE_PICKER = 0;
 
     private EditText mEditTextTitle;
     private Button mButtonDate;
@@ -106,8 +110,9 @@ public class CrimeDetailFragment extends Fragment {
         mButtonDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerFragment fragment = DatePickerFragment.newInstance();
-                fragment.show(getFragmentManager(), TAG_DATE_PICKER);
+                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(mCrime.getDate());
+                datePickerFragment.setTargetFragment(CrimeDetailFragment.this, REQUEST_CODE_DATE_PICKER);
+                datePickerFragment.show(getFragmentManager(), TAG_DATE_PICKER);
             }
         });
     }
@@ -120,6 +125,21 @@ public class CrimeDetailFragment extends Fragment {
         mEditTextTitle.setText(mCrime.getTitle());
         mButtonDate.setText(mCrime.getDate().toString());
         mCheckBoxSolved.setChecked(mCrime.getSolved());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != Activity.RESULT_OK || data == null)
+            return;
+
+        if (requestCode == REQUEST_CODE_DATE_PICKER) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_CRIME_DATE);
+
+            mCrime.setDate(date);
+            mButtonDate.setText(date.toString());
+        }
     }
 
 }
