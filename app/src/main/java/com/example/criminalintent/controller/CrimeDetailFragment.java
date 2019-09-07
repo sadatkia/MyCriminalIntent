@@ -30,6 +30,7 @@ import java.util.UUID;
 public class CrimeDetailFragment extends Fragment {
 
     public static final String ARG_CRIME_ID = "crimeId";
+    public static final String TAG_DATE_PICKER = "DatePicker";
 
     private EditText mEditTextTitle;
     private Button mButtonDate;
@@ -61,7 +62,6 @@ public class CrimeDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(SingleFragmentActivity.TAG, "CrimeFragment:onCreate");
 
-//        UUID id = (UUID) getActivity().getIntent().getSerializableExtra(CrimeListFragment.EXTRA_CRIME_ID);
         UUID id = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeRepository.getInstance().getCrime(id);
     }
@@ -72,16 +72,13 @@ public class CrimeDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_crime, container, false);
 
-        mEditTextTitle = view.findViewById(R.id.edittext_title);
-        mButtonDate = view.findViewById(R.id.button_date);
-        mCheckBoxSolved = view.findViewById(R.id.checkbox_solved);
+        initUI(view);
+        initListeners();
 
-        mEditTextTitle.setText(mCrime.getTitle());
-        mButtonDate.setText(mCrime.getDate().toString());
-        mCheckBoxSolved.setChecked(mCrime.getSolved());
+        return view;
+    }
 
-        mButtonDate.setEnabled(false);
-
+    private void initListeners() {
         mEditTextTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -106,7 +103,23 @@ public class CrimeDetailFragment extends Fragment {
             }
         });
 
-        return view;
+        mButtonDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerFragment fragment = DatePickerFragment.newInstance();
+                fragment.show(getFragmentManager(), TAG_DATE_PICKER);
+            }
+        });
+    }
+
+    private void initUI(View view) {
+        mEditTextTitle = view.findViewById(R.id.edittext_title);
+        mButtonDate = view.findViewById(R.id.button_date);
+        mCheckBoxSolved = view.findViewById(R.id.checkbox_solved);
+
+        mEditTextTitle.setText(mCrime.getTitle());
+        mButtonDate.setText(mCrime.getDate().toString());
+        mCheckBoxSolved.setChecked(mCrime.getSolved());
     }
 
 }

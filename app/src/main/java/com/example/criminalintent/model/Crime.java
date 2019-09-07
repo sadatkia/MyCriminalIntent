@@ -5,6 +5,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -44,7 +45,22 @@ public class Crime {
 
     public Crime() {
         mId = UUID.randomUUID();
-        mDate = new Date();
+        mDate = generateRandomDate();
+//        mDate = new Date();
+    }
+
+    private Date generateRandomDate() {
+        GregorianCalendar gc = new GregorianCalendar();
+        int year = randBetween(2000, 2019);
+        gc.set(gc.YEAR, year);
+        int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
+        gc.set(gc.DAY_OF_YEAR, dayOfYear);
+
+        return gc.getTime();
+    }
+
+    private int randBetween(int start, int end) {
+        return start + (int)Math.round(Math.random() * (end - start));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

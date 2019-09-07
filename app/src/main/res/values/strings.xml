@@ -7,4 +7,6 @@
     <string name="textview_details">Details</string>
     <string name="checkbox_solved">Solved</string>
     <string name="edittext_crime_hint">Enter your crime here</string>
+
+    <string name="date_picker_title">Date of crime:</string>
 </resources>
