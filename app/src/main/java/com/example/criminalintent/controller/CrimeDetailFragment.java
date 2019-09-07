@@ -141,5 +141,4 @@ public class CrimeDetailFragment extends Fragment {
             mButtonDate.setText(date.toString());
         }
     }
-
 }

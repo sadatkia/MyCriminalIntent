@@ -72,25 +72,26 @@ public class DatePickerFragment extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        int year = mDatePicker.getYear();
-                        int monthOfYear = mDatePicker.getMonth();
-                        int dayOfMonth = mDatePicker.getDayOfMonth();
-
-                        GregorianCalendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-                        Date date = calendar.getTime();
-
-                        Intent intent = new Intent();
-                        intent.putExtra(EXTRA_CRIME_DATE, date);
-
-                        Fragment fragment = getTargetFragment();
-                        fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-
-//                        CrimeDetailFragment crimeDetailFragment = (CrimeDetailFragment) getTargetFragment();
-//                        crimeDetailFragment.updateCrimeDate(date);
+                        sendResult();
                     }
                 })
                 .setView(view)
                 .create();
+    }
+
+    private void sendResult() {
+        int year = mDatePicker.getYear();
+        int monthOfYear = mDatePicker.getMonth();
+        int dayOfMonth = mDatePicker.getDayOfMonth();
+
+        GregorianCalendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        Date date = calendar.getTime();
+
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_CRIME_DATE, date);
+
+        Fragment fragment = getTargetFragment();
+        fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }
 
     private void initDatePicker() {
