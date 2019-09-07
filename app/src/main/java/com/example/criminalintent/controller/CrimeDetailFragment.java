@@ -2,6 +2,7 @@ package com.example.criminalintent.controller;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.criminalintent.R;
 import com.example.criminalintent.model.Crime;
@@ -27,6 +29,7 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -44,9 +47,10 @@ public class CrimeDetailFragment extends Fragment {
     private Button mButtonDate;
     private Button mButtonTime;
     private CheckBox mCheckBoxSolved;
-
+    private List<Crime> mCrimes;
     private Crime mCrime;
-
+    private Date time;
+   private Date date;
     public CrimeDetailFragment() {
         // Required empty public constructor
     }
@@ -162,16 +166,26 @@ public class CrimeDetailFragment extends Fragment {
             return;
 
         if (requestCode == REQUEST_CODE_DATE_PICKER) {
-            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_CRIME_DATE);
+             date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_CRIME_DATE);
+            SimpleDateFormat format11 = new SimpleDateFormat("yyyy/MM/dd");
+            String dateString = format11.format(date);
+            mButtonDate.setText(dateString);
+
             mCrime.setDate(date);
-            mButtonDate.setText(date.toString());}
+           // Toast.makeText(getActivity(),String.valueOf(date) , Toast.LENGTH_LONG).show();
+            mCrime.setDate(time);
+            //Toast.makeText(new CrimeListActivity(),String.valueOf(time) , Toast.LENGTH_LONG) .show();
+        }
 
             if (requestCode == REQUEST_CODE_TIME_PICKER) {
-               Date time = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_CRIME_TIME);
+                time = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_CRIME_TIME);
 
                 SimpleDateFormat format1 = new SimpleDateFormat("hh:mm");
                 String timeString = format1.format(time);
                 mButtonTime.setText(timeString);
+                mCrime.setDate(date);
+                mCrime.setDate(time);
+
 
                }
 
